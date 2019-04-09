@@ -1,10 +1,11 @@
 import request from "request-promise"
 
-const daemon_path = "http://127.0.0.1:12211"
+const config = require("../../config.json")
+const daemon_url = config[config.network].daemon_url
 
 export async function getInfo() {
     let options = {
-        uri: `${daemon_path}/json_rpc`,
+        uri: `${daemon_url}/json_rpc`,
         method: "POST",
         json: {
             jsonrpc: "2.0",
@@ -17,7 +18,7 @@ export async function getInfo() {
 
 export async function getBlock(height=0) {
     let options = {
-        uri: `${daemon_path}/json_rpc`,
+        uri: `${daemon_url}/json_rpc`,
         method: "POST",
         json: {
             jsonrpc: "2.0",

@@ -204,7 +204,6 @@
 
 <script>
 import { mapState } from "vuex"
-import { openURL } from "quasar"
 import { filters } from "../mixins/filters.js"
 import FormatRyo from "../components/format_ryo"
 export default {
@@ -220,7 +219,7 @@ export default {
             this.modals.block = true
         },
         openExplorer(hash) {
-            openURL("https://explorer.ryo-currency.com/block/"+hash)
+            this.$gateway.send("core", "open_explorer", {type: "block", id: hash})
         },
     },
     data () {

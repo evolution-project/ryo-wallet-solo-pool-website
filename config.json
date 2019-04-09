@@ -1,0 +1,22 @@
+{
+    "network": "testnet",
+
+    "mainnet": {
+        "api_url": "https://solo-pool.ryoblocks.com/api/",
+        "daemon_url": "http://127.0.0.1:12211",
+        "explorer_url": "https://explorer.ryo-currency.com",
+
+        "api_port": 8117,
+        "start_height": 235000,
+        "refresh_interval": 30
+    },
+    "testnet": {
+        "api_url": "http://localhost:8117",
+        "daemon_url": "http://127.0.0.1:13311",
+        "explorer_url": "https://tnexp.ryoblocks.com",
+
+        "api_port": 8117,
+        "start_height": 190000,
+        "refresh_interval": 30
+    }
+}

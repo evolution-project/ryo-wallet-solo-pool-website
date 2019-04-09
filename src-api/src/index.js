@@ -4,6 +4,12 @@ import { Database } from "./database"
 const fastify = require("fastify")()
 const database = new Database()
 
+const config = require("../../config.json")
+const api_port = config[config.network].api_port
+const initial_start_height = config[config.network].start_height
+const refresh_interval = config[config.network].refresh_interval * 1000
+
+
 let stats = {}
 
 fastify.register(require("fastify-cors"), {
@@ -52,7 +58,7 @@ async function loop() {
         const info = await getInfo()
         if(info.hasOwnProperty("error")) {
             console.log(info.error)
-            await timeout(30000)
+            await timeout(refresh_interval)
             return
         }
 
@@ -60,8 +66,7 @@ async function loop() {
         let end_height = parseInt(info.result.height)
 
         if(start_height == -1) {
-            start_height = 190000
-            //start_height = 235000
+            start_height = initial_start_height
         }
 
         end_height = Math.min(start_height + 360, end_height)
@@ -70,7 +75,7 @@ async function loop() {
             console.log("Collecting stats")
             stats = await database.heartbeat()
             database.cleanStats()
-            await timeout(30000)
+            await timeout(refresh_interval)
         } else {
             database.begin()
             console.log(`Scanning ${start_height} to ${end_height}`)
@@ -86,14 +91,14 @@ async function loop() {
 
     } catch(error) {
         console.log(error.message || error)
-        await timeout(30000)
+        await timeout(refresh_interval)
     }
 
 }
 
 (async function() {
     try {
-        await fastify.listen(8117)
+        await fastify.listen(api_port)
         fastify.log.info(`server listening on ${fastify.server.address().port}`)
     } catch(error) {
         fastify.log.error(error)
