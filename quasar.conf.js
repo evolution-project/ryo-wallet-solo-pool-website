@@ -2,6 +2,7 @@ module.exports = function (ctx) {
     return {
         plugins: [
             "axios",
+	    "vuelidate",
             "gateway"
         ],
         css: [
@@ -40,12 +41,17 @@ module.exports = function (ctx) {
                 "QItemTile",
                 "QModal",
                 "QModalLayout",
+                "QField",
+                "QInput",
+                "QCheckbox",
                 "QTooltip",
                 "QTable",
                 "QTh",
                 "QTr",
                 "QTd",
-                "QTableColumns"
+                "QTableColumns",
+                "QInnerLoading",
+                "QSpinner"
             ],
             directives: [
                 "Ripple"

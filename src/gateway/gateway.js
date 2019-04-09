@@ -26,8 +26,8 @@ export class Gateway {
             LocalStorage.set("theme", theme)
         })
 
-
         const refreshInterval = 120
+
         setInterval(() => this.getStats(), refreshInterval * 1000)
         this.getStats()
 
@@ -44,18 +44,53 @@ export class Gateway {
             numBlocks = blocks.length
         })
 
+        this.wallet = LocalStorage.has("wallet") ? LocalStorage.get.item("wallet") : {}
+        this.myBlocks = []
+
     }
 
     getStats() {
         axios.get(api_url).then(response => {
             if(response.status == 200 && response.hasOwnProperty("data")) {
-                this.app.store.commit("gateway/set_pool_data", response.data)
+                const response_stats = response.data
+                if(this.wallet.hasOwnProperty("address") && this.wallet.hasOwnProperty("viewkey")) {
+                    const { address, viewkey } = this.wallet
+                    axios.get(`${api_url}/account/${address}/${viewkey}`).then(response => {
+                        if(response.status == 200 && response.hasOwnProperty("data")) {
+                            if(response.data.error) {
+                                this.send("core", "show_notification", {
+                                    type: "negative",
+                                    message: response.data.error.message
+                                })
+                                this.app.store.commit("gateway/set_worker_data", { status: 0 })
+                            } else {
+                                this.myBlocks = response.data.blocks.map(block => block.hash)
+                                this.app.store.commit("gateway/set_worker_data", {
+                                    ...response.data,
+                                    quick_blocks: this.myBlocks,
+                                    status: 0
+                                })
+                            }
+                        }
+                        this.app.store.commit("gateway/set_pool_data", response_stats)
+                    }).catch(error => {
+                        this.app.store.commit("gateway/set_worker_data", { status: 0 })
+                        this.app.store.commit("gateway/set_pool_data", response_stats)
+                        console.log(`API error - ${api_url}`)
+                        console.log(error)
+                    })
+                } else {
+                    this.app.store.commit("gateway/set_pool_data", response_stats)
+                }
             }
         }).catch(error => {
+            this.app.store.commit("gateway/set_worker_data", { status: 0 })
             console.log(`API error - ${api_url}`)
             console.log(error)
         })
     }
+
+
 
     send(module, method, data={}) {
         let message = {
@@ -71,6 +106,15 @@ export class Gateway {
         let params = message.data
 
         switch (message.method) {
+
+            case "set_wallet":
+                if(params.save) {
+                    LocalStorage.set("wallet", params)
+                }
+                this.wallet = params
+                this.getStats()
+
+                break
 
             case "show_notification":
                 let notification = {

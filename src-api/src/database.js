@@ -1,4 +1,4 @@
-import { getBlock } from "./rpc"
+import { getBlock, decodeOutputs } from "./rpc"
 import SQL from "better-sqlite3"
 
 export class Database {
@@ -10,12 +10,19 @@ export class Database {
         this.db = new SQL(this.sqlitePath)
 
         this.db.prepare("CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT) WITHOUT ROWID;").run()
-        this.db.prepare("CREATE TABLE IF NOT EXISTS blocks(hash TEXT PRIMARY KEY, height INTEGER, difficulty INTEGER, nonce INTEGER, reward INTEGER, timestamp DATETIME, version TEXT, status INTEGER) WITHOUT ROWID;").run()
+        this.db.prepare("CREATE TABLE IF NOT EXISTS blocks(hash TEXT PRIMARY KEY, txid TEXT, height INTEGER, difficulty INTEGER, nonce INTEGER, reward INTEGER, timestamp DATETIME, version TEXT, status INTEGER, address TEXT) WITHOUT ROWID;").run()
         this.db.prepare("CREATE TABLE IF NOT EXISTS hashrate(timestamp DATETIME, hashes INTEGER);").run()
         this.db.prepare("CREATE TABLE IF NOT EXISTS network_blocks(height INTEGER PRIMARY KEY, difficulty INTEGER, timestamp DATETIME) WITHOUT ROWID;").run()
         this.db.prepare("CREATE TABLE IF NOT EXISTS network_hashrate(timestamp DATETIME, hashes INTEGER);").run()
+        this.db.prepare("CREATE TABLE IF NOT EXISTS accounts(address TEXT PRIMARY KEY, viewkey TEXT, scan_height INTEGER) WITHOUT ROWID;").run()
 
         this.db.prepare("INSERT OR IGNORE INTO settings(key, value) VALUES('height', -1)").run()
+
+        // RYoTqzy6zKKeP9UhkPWZpwMiAzV1cPE3vews8Q7vT4mKFMTqGPXBPNsWaKSu27ybqTNwqtqeKahkrBPmN1aEb4qEGKtgUPJvwhE
+        // 7420b985d15942957cd1b2881701bf8cf32cd988a8f6b999b41ee7a99305fc06
+
+        this.db.prepare("INSERT OR IGNORE INTO accounts(address, viewkey, scan_height) VALUES('RYoTqzy6zKKeP9UhkPWZpwMiAzV1cPE3vews8Q7vT4mKFMTqGPXBPNsWaKSu27ybqTNwqtqeKahkrBPmN1aEb4qEGKtgUPJvwhE', '7420b985d15942957cd1b2881701bf8cf32cd988a8f6b999b41ee7a99305fc06', 0)").run() //tmp
+
 
         this.stmt = {
 
@@ -26,10 +33,19 @@ export class Database {
             settings: this.db.prepare("SELECT * FROM settings"),
             settings_update: this.db.prepare("UPDATE settings SET value = :value WHERE key = :key"),
 
-            blocks: this.db.prepare("SELECT * FROM blocks ORDER BY height desc"),
+            accounts: this.db.prepare("SELECT * FROM accounts"),
+            accounts_get: this.db.prepare("SELECT * FROM accounts WHERE address = :address AND viewkey = :viewkey"),
+            accounts_add: this.db.prepare("INSERT OR IGNORE INTO accounts(address, viewkey, scan_height) VALUES(:address, :viewkey, 0)"),
+            accounts_update: this.db.prepare("UPDATE accounts SET scan_height = :scan_height WHERE address = :address"),
+
+            blocks: this.db.prepare("SELECT hash, txid, height, difficulty, nonce, reward, timestamp, version, status FROM blocks ORDER BY height desc"),
             blocks_status_0: this.db.prepare("SELECT * FROM blocks WHERE status = 0"),
             blocks_update: this.db.prepare("UPDATE blocks SET status = :status WHERE hash = :hash"),
-            blocks_add: this.db.prepare("INSERT OR IGNORE INTO blocks(hash, height, difficulty, nonce, reward, timestamp, version, status) VALUES(:hash, :height, :difficulty, :nonce, :reward, :timestamp, :version, :status)"),
+            blocks_add: this.db.prepare("INSERT OR IGNORE INTO blocks(hash, txid, height, difficulty, nonce, reward, timestamp, version, status, address) VALUES(:hash, :txid, :height, :difficulty, :nonce, :reward, :timestamp, :version, :status, '')"),
+
+            blocks_claimed: this.db.prepare("SELECT * FROM blocks WHERE address = :address ORDER BY height desc"),
+            blocks_unclaimed: this.db.prepare("SELECT * FROM blocks WHERE address = '' ORDER BY height asc"),
+            blocks_update_address: this.db.prepare("UPDATE blocks SET address = :address WHERE hash = :hash"),
 
             hashrate: this.db.prepare("SELECT * FROM hashrate"),
             hashrate_add: this.db.prepare("INSERT OR IGNORE INTO hashrate(timestamp, hashes) VALUES(:timestamp, :hashes)"),
@@ -75,6 +91,7 @@ export class Database {
         const dateNow = Date.now() / 1000
 
         await this.unlockBlocks()
+        await this.detectUserBlocks()
 
         const blocks = this.getBlocks()
         const network_blocks = this.getNetworkBlocks()
@@ -157,6 +174,58 @@ export class Database {
                 console.log(`Failed to get block ${block.height}`)
             }
         }
+    }
+
+    async detectUserBlocks() {
+        const accounts = this.getAccounts()
+        const blocks = this.stmt.blocks_unclaimed.all()
+        for(const block of blocks) {
+            const { hash, txid, height } = block
+            for(const account of accounts) {
+                const { address, viewkey, scan_height } = account
+                if(scan_height >= height) {
+                    continue
+                }
+                console.log(`Checking block ${height} for user ${address.substring(0,10)}`)
+                try {
+                    const data = await decodeOutputs(txid, address, viewkey)
+                    if(data.status == "error") {
+                        throw data.message
+                    }
+                    if(data.data.outputs[0].match) {
+                        console.log(`Output match block ${height} for user ${address.substring(0,10)}`)
+                        this.stmt.blocks_update_address.run({ address, hash })
+                        break
+                    }
+                } catch(error) {
+                    console.log(`Failed to contact explorer ${txid} - ${error}`)
+                    console.log("Stopping scan")
+                    return false
+                }
+            }
+            for(const account of accounts) {
+                const { address } = account
+                const scan_height = Math.max(account.scan_height, height)
+                this.stmt.accounts_update.run({ address, scan_height })
+            }
+        }
+    }
+
+    createUserAccount(address, viewkey) {
+        this.stmt.accounts_add.run({ address, viewkey })
+    }
+
+    getUserAccount(address, viewkey) {
+        return this.stmt.accounts_get.get({ address, viewkey })
+    }
+
+    getUserBlocks(address) {
+        const blocks = this.stmt.blocks_claimed.all({ address })
+        return blocks
+    }
+
+    getAccounts() {
+        return this.stmt.accounts.all()
     }
 
     getBlocks() {
@@ -253,9 +322,10 @@ export class Database {
     }
 
     addBlock(block_header) {
-        const { hash, height, difficulty, nonce, reward, timestamp, major_version, minor_version } = block_header
+        const { hash, txid, height, difficulty, nonce, reward, timestamp, major_version, minor_version } = block_header
         this.stmt.blocks_add.run({
             hash,
+            txid,
             height,
             difficulty,
             nonce,

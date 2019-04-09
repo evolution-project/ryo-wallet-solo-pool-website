@@ -1,5 +1,9 @@
+import { regex_address, regex_viewkey } from "./utils"
 import { getInfo, getBlock } from "./rpc"
 import { Database } from "./database"
+
+import ryo_utils_promise from "ryo-core-js/dist/ryo_utils"
+import * as ryo_utils_nettype from "ryo-core-js/dist/ryo_utils_nettype"
 
 const fastify = require("fastify")()
 const database = new Database()
@@ -12,12 +16,65 @@ const refresh_interval = config[config.network].refresh_interval * 1000
 
 let stats = {}
 
+
+let nettype = ryo_utils_nettype.network_type.MAINNET
+if(config.network == "testnet") {
+    nettype = ryo_utils_nettype.network_type.TESTNET
+}
+
+let core_bridge = false
+ryo_utils_promise.then(_core_bridge => {
+    core_bridge = _core_bridge
+})
+
+
 fastify.register(require("fastify-cors"), {
     origin: "*"
 })
 
 fastify.get("/", async (request, reply) => {
     return stats
+})
+
+fastify.get("/account/:address/:viewkey", async (request, reply) => {
+    const { address, viewkey } = request.params
+    try {
+        if(!regex_address.test(address)) {
+            console.log("Invalid address login")
+            return { error: { message: "Invalid address" } }
+        }
+        if(!regex_viewkey.test(viewkey)) {
+            console.log("Invalid viewkey login")
+            return { error: { message: "Invalid viewkey" } }
+        }
+
+        let account = database.getUserAccount(address, viewkey)
+        let blocks = []
+
+        if(!account) {
+            const decoded_address = core_bridge.decode_address(address, nettype)
+            const sec_viewkey = core_bridge.secret_key_to_public_key(viewkey)
+            if(sec_viewkey != decoded_address.view) {
+                return { error: { message: "Viewkey does not match address" } }
+            }
+
+            database.createUserAccount(address, viewkey)
+
+            account = { address, scan_height: 0 }
+
+        } else {
+            delete account.viewkey
+            blocks = database.getUserBlocks(address)
+        }
+
+        return { account, blocks }
+
+
+    } catch(error) {
+        console.log(`Error with /account/ API ${error.message}`)
+        return { error: { message: "Error fetching account" } }
+    }
+
 })
 
 function timeout(ms) {
@@ -31,11 +88,16 @@ async function checkBlocks(start, end) {
             if(block.hasOwnProperty("error")) {
                 throw block.error
             }
+
+
             const json = JSON.parse(block.result.json)
+
             const miner_extra = json.miner_tx.extra
             const is_solo_block = miner_extra.length == 36 && miner_extra[33] == 2 && miner_extra[34] == 1
 
             let block_header = block.result.block_header
+
+            block_header.txid = block.result.miner_tx_hash
             block_header.reward = json.miner_tx.vout[0].amount
 
             database.addNetworkBlock(block_header)
@@ -72,8 +134,9 @@ async function loop() {
         end_height = Math.min(start_height + 360, end_height)
 
         if(start_height == end_height) {
-            console.log("Collecting stats")
+            console.log("Collecting stats...")
             stats = await database.heartbeat()
+            console.log("Collecting stats... done")
             database.cleanStats()
             await timeout(refresh_interval)
         } else {

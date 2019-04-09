@@ -6,3 +6,6 @@ export const set_app_data = (state, data) => {
 export const set_pool_data = (state, data) => {
     state.pool = objectAssignDeep.noMutate(state.pool, data)
 }
+export const set_worker_data = (state, data) => {
+    state.worker = objectAssignDeep.noMutate(state.worker, data)
+}

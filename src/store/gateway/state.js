@@ -28,5 +28,13 @@ export default {
             network: {}
         },
         blocks: [],
-    }
+    },
+    worker: {
+        status: 0,
+        account: {
+            address: "",
+            scan_height: 0,
+        },
+        blocks: [],
+    },
 }

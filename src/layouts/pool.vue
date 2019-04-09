@@ -20,6 +20,10 @@
                 <q-item-side icon="dashboard" />
                 <q-item-main label="Dashboard" sublabel="General pool stats" />
             </q-item>
+            <q-item v-ripple to="/worker-stats">
+                <q-item-side icon="apps" />
+                <q-item-main label="Worker Statistics" sublabel="View your miner stats" />
+            </q-item>
             <q-item v-ripple to="/blocks">
                 <q-item-side icon="apps" />
                 <q-item-main label="Blocks" sublabel="List of mined blocks" />
