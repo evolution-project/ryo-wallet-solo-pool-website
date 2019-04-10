@@ -35,6 +35,7 @@ export class Gateway {
         this.app.store.watch( state => state.gateway.pool.blocks, (blocks) => {
             if(numBlocks != null && blocks.length != numBlocks) {
                 const block = blocks[0]
+                // check if it is my block
                 Notify.create({
                     type: "positive",
                     timeout: 2000,
@@ -106,6 +107,24 @@ export class Gateway {
         let params = message.data
 
         switch (message.method) {
+
+            case "unset_wallet":
+                if(LocalStorage.has("wallet")) {
+                    LocalStorage.remove("wallet")
+                }
+                this.wallet = {}
+                this.myBlocks = []
+                this.app.store.commit("gateway/set_worker_data", {
+                    status: 0,
+                    account: {
+                        address: "",
+                        scan_height: 0,
+                    },
+                    blocks: [],
+                    quick_blocks: [],
+                })
+
+                break
 
             case "set_wallet":
                 if(params.save) {

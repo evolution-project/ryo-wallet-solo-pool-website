@@ -45,8 +45,37 @@
             </q-inner-loading>
 
         </div>
+        <div v-else>
 
+            <div class="row gutter-x-sm items-center">
+                <div class="col-auto">
+                    <Identicon :address="worker.account.address" ref="identicon" />
+                </div>
+                <div class="col">
+                    <div class="monospace ellipsis">
+                        {{ worker.account.address }}
+                    </div>
+                </div>
+                <div class="col-auto" v-if="worker.account.scan_height < pool.stats.lastBlock.height">
+                    <small>
+                        <q-spinner color="primary" :size="10" /> Loading... This may take a few minutes.
+                    </small>
+                </div>
+                <div class="col-auto">
+                    <q-btn flat size="sm" label="forget this address" @click="clear_stats" />
+                </div>
+            </div>
+
+            <h6 class="text-weight-light q-mb-md">Blocks Found</h6>
+
+            <BlockTable :blocks="worker.blocks" :extended="false" />
+
+        </div>
+
+
+        <h6 class="text-weight-light q-mb-md">Debug</h6>
         <pre>{{ worker }}</pre>
+
 
     </div>
 </q-page>
@@ -59,6 +88,8 @@
 import { required, numeric } from "vuelidate/lib/validators"
 import { privkey, address } from "src/validators/common"
 import { mapState } from "vuex"
+import BlockTable from "../components/block_table"
+import Identicon from "../components/identicon"
 export default {
     computed: {
         ...mapState({
@@ -110,6 +141,15 @@ export default {
 
             this.$gateway.send("core", "set_wallet", this.wallet)
         },
+
+        clear_stats() {
+            this.$gateway.send("core", "unset_wallet")
+        }
+
+    },
+    components: {
+        BlockTable,
+        Identicon
     }
 }
 </script>
