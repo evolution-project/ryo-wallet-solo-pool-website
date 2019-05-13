@@ -1,4 +1,5 @@
 import { openURL, AddressbarColor, Notify, LocalStorage } from "quasar"
+import { Howl, Howler } from "howler"
 import axios from "axios"
 
 const config = require("../../config.json")
@@ -13,6 +14,10 @@ export class Gateway {
         this.router = router
 
         AddressbarColor.set("#63c9f3")
+
+        this.dingSound = new Howl({
+            src: ["/statics/ding.mp3"]
+        })
 
         const theme = LocalStorage.has("theme") ? LocalStorage.get.item("theme") : "dark"
         this.app.store.commit("gateway/set_app_data", {
@@ -35,12 +40,20 @@ export class Gateway {
         this.app.store.watch( state => state.gateway.pool.blocks, (blocks) => {
             if(numBlocks != null && blocks.length != numBlocks) {
                 const block = blocks[0]
-                // check if it is my block
-                Notify.create({
-                    type: "positive",
-                    timeout: 2000,
-                    message: `Solo miner found block at height ${block.height}`
-                })
+                if(this.myBlocks.includes(block.hash)) {
+                    this.dingSound.play()
+                    Notify.create({
+                        type: "positive",
+                        timeout: 2000,
+                        message: `You found block at height ${block.height}`
+                    })
+                } else {
+                    Notify.create({
+                        type: "positive",
+                        timeout: 2000,
+                        message: `Solo miner found block at height ${block.height}`
+                    })
+                }
             }
             numBlocks = blocks.length
         })

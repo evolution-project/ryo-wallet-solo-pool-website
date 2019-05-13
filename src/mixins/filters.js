@@ -27,7 +27,10 @@ export const filters =  {
             return Math.round(val * 100) + "%"
         },
         commas: (num) => {
-            return num.toLocaleString()
+            if(num) {
+                return num.toLocaleString()
+            }
+            return 0
         },
         time: (val) => {
             if(val == null) {

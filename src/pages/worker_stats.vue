@@ -7,6 +7,8 @@
 
             <p>Enter your public Ryo address and private viewkey and we will scan the solo-mined blocks to check which ones are yours. You will be able to see your estimated hashrate, total amount mined, including pending and unlocked funds. You may select "Remember me" in order to save your address and viewkey to the local browser storage.</p>
 
+            <p><strong>Important:</strong> This feature only works if you have selected "Privately Share Hashrate" in Atom.</p>
+
             <q-field>
                 <q-input
                     v-model="wallet.address"

@@ -3,7 +3,7 @@
     <div class="q-pa-md getting-started">
         <h6 class="text-weight-light q-mt-xs q-mb-md">Getting Started</h6>
 
-        <p>Solo mining with Ryo Wallet Atom is an easy process. First, download and install <a href="https://github.com/ryo-currency/ryo-wallet/releases" target="_blank">Ryo Wallet Atom</a> version 1.3.1 or higher.</p>
+        <p>Solo mining with Ryo Wallet Atom is an easy process. First, download and install <a href="https://github.com/ryo-currency/ryo-wallet/releases/latest" target="_blank">Ryo Wallet Atom</a> version 1.3.1 or higher.</p>
 
         <p><strong>Important:</strong> You must use either the Local+Remote or Local Only daemon type and have a fully synced blockchain.</p>
         <p><strong>Important:</strong> Make sure you are hashing the correct algo, Cryptonight-GPU, when mining to the solo pool. Shares will not be validated and incorrect algo will result in rejected blocks.</p>

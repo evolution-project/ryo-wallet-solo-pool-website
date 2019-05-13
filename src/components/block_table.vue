@@ -98,11 +98,9 @@
                 </div>
             </div>
 
-            <div class="row gutter-sm q-mt-xs">
-            </div>
 
             <div class="row gutter-sm q-mt-xs">
-                <div class="col">
+                <div class="col-12 col-md-4">
                     <div class="infoBox">
                         <div class="infoBoxContent">
                             <div class="text">Block Height<span></span></div>
@@ -110,7 +108,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-12 col-md-4">
                     <div class="infoBox">
                         <div class="infoBoxContent">
                             <div class="text">Block Difficulty<span></span></div>
@@ -118,7 +116,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-12 col-md-4">
                     <div class="infoBox">
                         <div class="infoBoxContent">
                             <div class="text"><span>Block Reward</span></div>
@@ -138,7 +136,7 @@
             </div>
 
             <div class="row gutter-sm q-mt-xs">
-                <div class="col">
+                <div class="col-12 col-md-4">
                     <div class="infoBox">
                         <div class="infoBoxContent">
                             <div class="text"><span>Block Status</span></div>
@@ -156,7 +154,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-12 col-md-4">
                     <div class="infoBox">
                         <div class="infoBoxContent">
                             <div class="text"><span>Unlock Time</span></div>
@@ -174,7 +172,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-12 col-md-4">
                     <div class="infoBox">
                         <div class="infoBoxContent">
                             <div class="text"><span>Time Found</span></div>
