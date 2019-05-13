@@ -11,7 +11,7 @@
     :pagination.sync="pagination_blocks"
     dense
     >
-    <q-tr slot="body" slot-scope="props" :props="props" class="cursor-pointer" @click.native="showBlockDetails(props.row)">
+    <q-tr slot="body" slot-scope="props" :props="props" class="cursor-pointer" v-bind:class="{ minedByMe: minedByMe(props.row) }" @click.native="showBlockDetails(props.row)">
         <q-td key="status" :props="props">
             <template v-if="props.row.status == 0">
                 <q-icon name="lock" />
@@ -74,13 +74,22 @@
                         <div class="infoBoxContent">
                             <div class="text"><span>Mined To</span></div>
                             <div class="value">
-                                <q-item class="q-px-none">
+                                <q-item v-if="minedByMe(block)" class="q-px-none">
                                     <q-item-side>
-                                        <div class="identicon"></div>
+                                        <Identicon :address="worker.account.address" ref="identicon" />
+                                    </q-item-side>
+                                    <q-item-main>
+                                        <q-item-tile label>You mined this block</q-item-tile>
+                                        <q-item-tile sublabel>{{ worker.account.address }}</q-item-tile>
+                                    </q-item-main>
+                                </q-item>
+                                <q-item v-else class="q-px-none">
+                                    <q-item-side>
+                                        <Identicon :address="false" ref="identicon" />
                                     </q-item-side>
                                     <q-item-main>
                                         <q-item-tile label>Anonymous</q-item-tile>
-                                        <q-item-tile sublabel>Solo mined blocks are never associated with a Ryo address</q-item-tile>
+                                        <q-item-tile sublabel>An unknown user mined this block</q-item-tile>
                                     </q-item-main>
                                 </q-item>
                             </div>
@@ -196,6 +205,7 @@
 import { mapState } from "vuex"
 import { filters } from "../mixins/filters.js"
 import FormatRyo from "../components/format_ryo"
+import Identicon from "../components/identicon"
 export default {
     name: "BlockTable",
     props: {
@@ -210,9 +220,18 @@ export default {
         ...mapState({
             theme: state => state.gateway.app.config.appearance.theme,
             pool: state => state.gateway.pool,
+            worker: state => state.gateway.worker,
         }),
     },
     methods: {
+        minedByMe(block) {
+            if(this.worker.account.address != "" && this.worker.quick_blocks) {
+                if(this.worker.quick_blocks.includes(block.hash)) {
+                    return true
+                }
+            }
+            return false
+        },
         showBlockDetails(block) {
             this.block = block
             this.modals.block = true
@@ -298,6 +317,7 @@ export default {
     },
     mixins: [filters],
     components: {
+        Identicon,
         FormatRyo
     }
 }

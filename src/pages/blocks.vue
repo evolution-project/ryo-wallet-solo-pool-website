@@ -1,6 +1,6 @@
 <template>
 <q-page>
-    <div class="q-pa-md">
+    <div class="q-pa-md blocks-page">
 
         <h6 class="text-weight-light q-mt-xs q-mb-md">Blocks Found</h6>
 

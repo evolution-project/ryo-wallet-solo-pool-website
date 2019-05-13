@@ -66,16 +66,50 @@
                 </div>
             </div>
 
-            <h6 class="text-weight-light q-mb-md">Blocks Found</h6>
+            <div class="row gutter-sm q-mt-md">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="infoBox">
+                        <div class="infoBoxContent">
+                            <div class="text"><span>Estimated Solo Hashrate</span></div>
+                            <div class="value"><span>{{ current_hashrate | hashrate }}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="infoBox">
+                        <div class="infoBoxContent">
+                            <div class="text"><span>Blocks Found Every</span></div>
+                            <div class="value"><span>{{ block_time | time }}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="infoBox">
+                        <div class="infoBoxContent">
+                            <div class="text"><span>Last Block Found</span></div>
+                            <div class="value"><span>{{ last_block_timestamp }}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="infoBox">
+                        <div class="infoBoxContent">
+                            <div class="text"><span>Blocks Found</span></div>
+                            <div class="value"><span>{{ worker.blocks.length | commas }}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <div class="q-pa-md">
+                <h6 class="text-weight-light q-mt-xs q-mb-lg">Estimated Solo Mining Hashrate (30 days)</h6>
+                <hashrate-chart :chart-data="hashrate_data"></hashrate-chart>
+            </div>
+
+            <h6 class="text-weight-light q-mb-md">Blocks Found</h6>
             <BlockTable :blocks="worker.blocks" :extended="false" />
 
         </div>
-
-
-        <h6 class="text-weight-light q-mb-md">Debug</h6>
-        <pre>{{ worker }}</pre>
-
 
     </div>
 </q-page>
@@ -88,10 +122,57 @@
 import { required, numeric } from "vuelidate/lib/validators"
 import { privkey, address } from "src/validators/common"
 import { mapState } from "vuex"
+import { filters } from "../mixins/filters.js"
 import BlockTable from "../components/block_table"
 import Identicon from "../components/identicon"
+import HashrateChart from "../components/hashrate_chart"
 export default {
     computed: {
+        last_block_timestamp() {
+            if(this.worker.blocks.length) {
+                return this.$options.filters.distanceInWords(this.$options.filters.mul1000(this.worker.blocks[0].timestamp))
+            }
+        },
+        current_hashrate() {
+            return this.hashrate_data.datasets[0].data[this.hashrate_data.datasets[0].data.length - 1]
+        },
+        block_time() {
+            if(this.current_hashrate === 0) {
+                return null
+            }
+            return Math.round(1000 * 240 * this.pool.network_stats.hashrate / this.current_hashrate)
+        },
+        hashrate_data() {
+            const dateNow = Date.now() / 1000
+
+            let labels = []
+            let data = []
+
+            const start_of_one_hour = dateNow - (dateNow % (60 * 60))
+            for(let j = start_of_one_hour - 30 * 24 * 60 * 60; j <= start_of_one_hour; j += 60 * 60) {
+                labels.push(1000 * j)
+
+                const k = j - 7 * 24 * 60 * 60
+
+                let val = 0
+                for(const block of this.worker.blocks) {
+                    if(k < block.timestamp && block.timestamp < j) {
+                        val += block.difficulty
+                    }
+                }
+                val = Math.round(val / (j - k))
+                data.push(val)
+            }
+
+            return {
+                labels,
+                datasets: [
+                    {
+                        data
+                    }
+                ]
+            }
+        },
         ...mapState({
             theme: state => state.gateway.app.config.appearance.theme,
             pool: state => state.gateway.pool,
@@ -147,7 +228,9 @@ export default {
         }
 
     },
+    mixins: [filters],
     components: {
+        HashrateChart,
         BlockTable,
         Identicon
     }

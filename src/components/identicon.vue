@@ -40,6 +40,7 @@ export default {
     },
     watch: {
         address: function(address) {
+            console.log(address)
             if(address && this.isAddressValid(address)) {
                 this.createIcon({
                     seed: address,
