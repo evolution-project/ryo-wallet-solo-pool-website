@@ -2,7 +2,7 @@
 <q-page>
     <div class="q-pa-md">
         <div class="row gutter-sm">
-            <div class="col">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="infoBox">
                     <div class="infoBoxContent">
                         <div class="text"><span>Estimated Solo Hashrate</span></div>
@@ -10,7 +10,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="infoBox">
                     <div class="infoBoxContent">
                         <div class="text"><span>Blocks Found Every</span></div>
@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="infoBox">
                     <div class="infoBoxContent">
                         <div class="text"><span>Last Block Found</span></div>
@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="infoBox">
                     <div class="infoBoxContent">
                         <div class="text"><span>Blocks Found</span></div>
@@ -37,7 +37,7 @@
         </div>
 
         <div class="row gutter-sm">
-            <div class="col">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="infoBox">
                     <div class="infoBoxContent">
                         <div class="text"><span>Network Hashrate</span></div>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="infoBox">
                     <div class="infoBoxContent">
                         <div class="text"><span>Network Difficulty</span></div>
@@ -53,7 +53,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="infoBox">
                     <div class="infoBoxContent">
                         <div class="text"><span>Network Height</span></div>
@@ -61,7 +61,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="infoBox">
                     <div class="infoBoxContent">
                         <div class="text"><span>Solo Mining Fee</span></div>

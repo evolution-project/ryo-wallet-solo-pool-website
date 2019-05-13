@@ -51,7 +51,7 @@ export class Gateway {
     }
 
     getStats() {
-        axios.get(api_url).then(response => {
+        axios.get(`${api_url}/`).then(response => {
             if(response.status == 200 && response.hasOwnProperty("data")) {
                 const response_stats = response.data
                 if(this.wallet.hasOwnProperty("address") && this.wallet.hasOwnProperty("viewkey")) {

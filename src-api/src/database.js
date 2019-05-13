@@ -199,8 +199,7 @@ export class Database {
                     }
                 } catch(error) {
                     console.log(`Failed to contact explorer ${txid} - ${error}`)
-                    console.log("Stopping scan")
-                    return false
+                    continue
                 }
             }
             for(const account of accounts) {
