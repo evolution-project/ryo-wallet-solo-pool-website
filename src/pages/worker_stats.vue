@@ -9,6 +9,8 @@
 
             <p><strong>Important:</strong> This feature only works if you have selected "Privately Share Hashrate" in Atom.</p>
 
+            <p><strong>Important:</strong> Your viewkey will be sent to the server.</p>
+
             <q-field>
                 <q-input
                     v-model="wallet.address"
@@ -101,6 +103,43 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="infoBox">
+                        <div class="infoBoxContent">
+                            <div class="text"><span>Total Rewards</span></div>
+                            <div class="value"><FormatRyo :amount="block_stats.total_rewards" /></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="infoBox">
+                        <div class="infoBoxContent">
+                            <div class="text"><span>Unlocked Rewards</span></div>
+                            <div class="value"><FormatRyo :amount="block_stats.unlocked_rewards" /></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="infoBox">
+                        <div class="infoBoxContent">
+                            <div class="text"><span>Locked Rewards</span></div>
+                            <div class="value"><FormatRyo :amount="block_stats.locked_rewards" /></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="infoBox">
+                        <div class="infoBoxContent">
+                            <div class="text"><span>Orphaned Blocks</span></div>
+                            <div class="value">{{ block_stats.orphaned | commas }}</span></div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="q-pa-md">
@@ -126,10 +165,36 @@ import { privkey, address } from "src/validators/common"
 import { mapState } from "vuex"
 import { filters } from "../mixins/filters.js"
 import BlockTable from "../components/block_table"
+import FormatRyo from "../components/format_ryo"
 import Identicon from "../components/identicon"
 import HashrateChart from "../components/hashrate_chart"
 export default {
     computed: {
+        block_stats() {
+            let data = {
+                total_rewards: 0,
+                unlocked_rewards: 0,
+                locked_rewards: 0,
+                orphaned: 0
+            }
+            for(const block of this.worker.blocks) {
+                let reward = block.reward == -1 ? 0 : block.reward
+                switch(block.status) {
+                    case 0:
+                        data.total_rewards += reward
+                        data.locked_rewards += reward
+                        break
+                    case 1:
+                        data.orphaned++
+                        break
+                    case 2:
+                        data.total_rewards += reward
+                        data.unlocked_rewards += reward
+                        break
+                }
+            }
+            return data
+        },
         last_block_timestamp() {
             if(this.worker.blocks.length) {
                 return this.$options.filters.distanceInWords(this.$options.filters.mul1000(this.worker.blocks[0].timestamp))
@@ -232,6 +297,7 @@ export default {
     },
     mixins: [filters],
     components: {
+        FormatRyo,
         HashrateChart,
         BlockTable,
         Identicon
