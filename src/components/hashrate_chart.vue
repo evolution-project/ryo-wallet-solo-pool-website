@@ -117,6 +117,9 @@ export default {
                     i++
                 }
             }
+            if(i >= 2 && precision == 0) {
+                precision = 1
+            }
             return parseFloat(hashrate).toFixed(precision) + byteUnits[i]
         },
     },
