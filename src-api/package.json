@@ -11,17 +11,21 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@babel/core": "^7.4.3",
-        "@babel/node": "^7.2.2",
-        "@babel/preset-env": "^7.4.3"
+        "@babel/core": "^7.7.4",
+        "@babel/node": "^7.7.4",
+        "@babel/preset-env": "^7.7.4"
     },
     "dependencies": {
-        "better-sqlite3": "^5.4.0",
-        "big-integer": "^1.6.43",
-        "fastify": "^2.2.0",
-        "fastify-cors": "^2.1.2",
+        "babel-node": "0.0.1-security",
+        "better-sqlite3": "^5.4.3",
+        "big-integer": "^1.6.48",
+        "fastify": "^2.10.0",
+        "fastify-cors": "^2.2.0",
+        "fs-minipass": "^1.2.7",
+        "minipass": "^2.9.0",
         "request": "^2.88.0",
-        "request-promise": "^4.2.4",
-        "ryo-core-js": "git://github.com/mosu-forge/ryo-core-js.git#dev"
+        "request-promise": "^4.2.5",
+        "ryo-core-js": "git://github.com/mosu-forge/ryo-core-js.git#dev",
+        "tar": "^4.4.13"
     }
 }

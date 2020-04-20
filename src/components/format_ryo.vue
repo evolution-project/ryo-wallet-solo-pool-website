@@ -1,6 +1,6 @@
 <template>
 <span>
-    {{ value }} Ryo
+    {{ value }} ARQ
 </span>
 </template>
 

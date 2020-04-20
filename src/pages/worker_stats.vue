@@ -5,7 +5,7 @@
 
         <div v-if="worker.account.address == ''">
 
-            <p>Enter your public Ryo address and private viewkey and we will scan the solo-mined blocks to check which ones are yours. You will be able to see your estimated hashrate, total amount mined, including pending and unlocked funds. You may select "Remember me" in order to save your address and viewkey to the local browser storage.</p>
+            <p>Enter your public ArQmA address and private viewkey and we will scan the solo-mined blocks to check which ones are yours. You will be able to see your estimated hashrate, total amount mined, including pending and unlocked funds. You may select "Remember me" in order to save your address and viewkey to the local browser storage.</p>
 
             <p><strong>Important:</strong> This feature only works if you have selected "Privately Share Hashrate" in Atom.</p>
 
@@ -207,7 +207,7 @@ export default {
             if(this.current_hashrate === 0) {
                 return null
             }
-            return Math.round(1000 * 240 * this.pool.network_stats.hashrate / this.current_hashrate)
+            return Math.round(1000 * 120 * this.pool.network_stats.hashrate / this.current_hashrate)
         },
         hashrate_data() {
             const dateNow = Date.now() / 1000

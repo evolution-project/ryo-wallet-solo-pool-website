@@ -21,7 +21,7 @@ export class Database {
         // RYoTqzy6zKKeP9UhkPWZpwMiAzV1cPE3vews8Q7vT4mKFMTqGPXBPNsWaKSu27ybqTNwqtqeKahkrBPmN1aEb4qEGKtgUPJvwhE
         // 7420b985d15942957cd1b2881701bf8cf32cd988a8f6b999b41ee7a99305fc06
 
-        this.db.prepare("INSERT OR IGNORE INTO accounts(address, viewkey, scan_height) VALUES('RYoTqzy6zKKeP9UhkPWZpwMiAzV1cPE3vews8Q7vT4mKFMTqGPXBPNsWaKSu27ybqTNwqtqeKahkrBPmN1aEb4qEGKtgUPJvwhE', '7420b985d15942957cd1b2881701bf8cf32cd988a8f6b999b41ee7a99305fc06', 0)").run() //tmp
+
 
 
         this.stmt = {
@@ -121,7 +121,7 @@ export class Database {
             const last_network_block = network_blocks[0]
             network_stats = {
                 diff: last_network_block.difficulty,
-                hashrate: Math.floor(last_network_block.difficulty / 240),
+                hashrate: Math.floor(last_network_block.difficulty / 120),
                 lastBlock: {
                     timestamp: last_network_block.timestamp,
                     height: last_network_block.height,
@@ -141,7 +141,7 @@ export class Database {
                 blockTime: null,
             }
             if(hashrate_current != 0) {
-                stats.blockTime = Math.floor(240 * network_stats.hashrate / hashrate_current)
+                stats.blockTime = Math.floor(120 * network_stats.hashrate / hashrate_current)
             }
         }
 
@@ -166,7 +166,7 @@ export class Database {
                     console.log(`Block ${block.height} orphaned`)
                     this.stmt.blocks_update.run({ status: 1, hash: block.hash })
                 }
-                if(data.result.block_header.depth > 60) {
+                if(data.result.block_header.depth > 18) {
                     console.log(`Block ${block.height} unlocked`)
                     this.stmt.blocks_update.run({ status: 2, hash: block.hash })
                 }

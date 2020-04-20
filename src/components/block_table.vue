@@ -16,7 +16,7 @@
             <template v-if="props.row.status == 0">
                 <q-icon name="lock" />
                 <q-tooltip anchor="center right" self="center left" :offset="[5, 0]">
-                    Pending ({{ props.row.height + 60 - pool.network_stats.lastBlock.height }} to go)
+                    Pending ({{ props.row.height + 18 - pool.network_stats.lastBlock.height }} to go)
                 </q-tooltip>
             </template>
             <template v-if="props.row.status == 1">
@@ -160,7 +160,7 @@
                             <div class="text"><span>Unlock Time</span></div>
                             <div class="value">
                                 <span v-if="block.status == 0">
-                                    {{ block.height + 60 - pool.network_stats.lastBlock.height }} to go
+                                    {{ block.height + 18 - pool.network_stats.lastBlock.height }} to go
                                 </span>
                                 <span v-if="block.status == 1">
                                     N/A

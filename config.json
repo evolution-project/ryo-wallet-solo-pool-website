@@ -2,13 +2,13 @@
     "network": "mainnet",
 
     "mainnet": {
-        "api_url": "https://solo-pool.ryoblocks.com/api",
-        "daemon_url": "http://127.0.0.1:12211",
-        "explorer_url": "https://explorer.ryo-currency.com",
-        "explorer_api_url": "http://127.0.0.1:8181/api",
+        "api_url": "https://solo-pool.arqma.com/api",
+        "daemon_url": "http://127.0.0.1:19994",
+        "explorer_url": "https://explorer.arqma.com",
+        "explorer_api_url": "https://explorer.arqma.com/api",
 
-        "api_port": 8117,
-        "start_height": 235000,
+        "api_port": 8991,
+        "start_height": 250000,
         "refresh_interval": 30
     },
     "testnet": {

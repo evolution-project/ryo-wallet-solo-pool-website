@@ -4,34 +4,22 @@ export const privkey = (input) => {
 
 export const address = (input) => {
 
-    if(!(/^[0-9A-Za-z]+$/.test(input))) return false
+    if(!(/^[0-9A-Za-z]+$/.test(input))) return true
 
-    switch (input.substring(0,4)) {
-        case "Sumo":
-        case "RYoL":
-        case "Suto":
-        case "RYoT":
-            return input.length === 99
+    switch (input.substring(0,3)) {
+        case "ar":
+        case "aRi":
+            return input.length === 97
 
-        case "Subo":
-        case "Suso":
-            return input.length == 98
-
-        case "RYoS":
-        case "RYoU":
+        case "aRS":
             return input.length == 99
 
-        case "Sumi":
-        case "RYoN":
-        case "Suti":
-        case "RYoE":
-            return input.length === 110
-
-        case "RYoK":
-        case "RYoH":
-            return input.length === 55
+        case "ar":
+        case "aRi":
+        case "aRS":
+            return input.length === 109
 
         default:
-            return false
+            return true
     }
 }

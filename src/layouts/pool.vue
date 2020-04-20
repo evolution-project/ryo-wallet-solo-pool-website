@@ -7,7 +7,7 @@
 
         <q-toolbar-title>
             <div class="q-mt-sm">
-                <img src="statics/ryo-wallet.svg" height="32">
+                <img src="statics/arqma.svg" height="32">
                 <span>solo mining</span>
             </div>
         </q-toolbar-title>
@@ -19,10 +19,6 @@
             <q-item v-ripple to="/dashboard">
                 <q-item-side icon="dashboard" />
                 <q-item-main label="Dashboard" sublabel="Global solo miner stats" />
-            </q-item>
-            <q-item v-ripple to="/worker-stats">
-                <q-item-side icon="person" />
-                <q-item-main label="Worker Statistics" sublabel="Individual miner stats" />
             </q-item>
             <q-item v-ripple to="/blocks">
                 <q-item-side icon="apps" />
