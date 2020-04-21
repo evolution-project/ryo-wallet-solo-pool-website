@@ -3,7 +3,7 @@
     <div class="q-pa-md getting-started">
         <h6 class="text-weight-light q-mt-xs q-mb-md">Getting Started</h6>
 
-        <p>Solo mining with ArQmA Electron Wallet is an easy process. First, download and install <a href="https://github.com/arqma/arqma-electron-wallet/releases/latest" target="_blank">ArQmA Electron Wallet</a> version 2.0.7 or higher.</p>
+        <p>Solo mining with Evolution Electron is an easy process. First, download and install <a href="https://github.com/evolution-project/evolution-electron-wallet/releases/latest" target="_blank">Evolution Electron</a> version 1.1.0 or higher.</p>
 
         <p><strong>Important:</strong> You must use either the Local+Remote or Local Only daemon type and have a fully synced blockchain.</p>
         <p><strong>Important:</strong> Make sure you are hashing the correct algo, RandomARQ, when mining to the solo pool. Shares will not be validated and incorrect algo will result in rejected blocks.</p>
@@ -12,8 +12,8 @@
         <p>If you have any questions about solo mining with Atom, join one of our social media platforms:</p>
 
         <p>
-            <a target="_blank" href="https://telegram.arqma.com">Telegram</a> |
-            <a target="_blank" href="https://chat.arqma.com">Discord</a>
+            <a target="_blank" href="https://twitter.com/Evolution_EvoX">Twitter</a> |
+    <!--        <a target="_blank" href="https://chat.arqma.com">Discord</a>    -->
         </p>
 
         

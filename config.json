@@ -2,10 +2,10 @@
     "network": "mainnet",
 
     "mainnet": {
-        "api_url": "https://solo-pool.arqma.com/api",
-        "daemon_url": "http://127.0.0.1:19994",
-        "explorer_url": "https://explorer.arqma.com",
-        "explorer_api_url": "https://explorer.arqma.com/api",
+        "api_url": "https://solo.evolutionproject.space/api",
+        "daemon_url": "http://127.0.0.1:52922",
+        "explorer_url": "https://explorer.evolutionproject.space",
+        "explorer_api_url": "https://explorer.evolutionproject.space/api",
 
         "api_port": 8991,
         "start_height": 250000,

@@ -7,7 +7,7 @@
 
         <q-toolbar-title>
             <div class="q-mt-sm">
-                <img src="statics/arqma.svg" height="32">
+                <img src="statics/evolution.svg" height="32">
                 <span>solo mining</span>
             </div>
         </q-toolbar-title>

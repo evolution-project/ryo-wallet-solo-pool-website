@@ -1,8 +1,8 @@
 {
   "name": "node-solo-pool-frontend",
   "version": "0.0.1",
-  "description": "Interface for viewing stats on users who solo mine with Ryo Wallet Atom",
-  "productName": "Ryo Solo Pool Frontend",
+  "description": "Interface for viewing stats on users who solo mine with Evolution Electron Wallet",
+  "productName": "Evolution Solo Pool Stats",
   "cordovaId": "org.cordova.quasar.app",
   "author": "mosu forge <mosu.forge@protonmail.com>",
   "private": true,
